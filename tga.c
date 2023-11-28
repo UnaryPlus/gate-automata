@@ -109,7 +109,7 @@ int main(int argc, char** argv) {
     exit(1);
   }
   fprintf(svg, "<svg viewBox=\"0 0 %d %d\" xmlns=\"http://www.w3.org/2000/svg\">\n", init_w + (gens * 2) + 3, gens + 2);
-  run_and_draw(svg, rule_table, gens, 1 + gens, 1, init_gen, init_w);
+  run_and_draw(svg, rule_table, gens, gens + 2, 1, init_gen, init_w);
   fprintf(svg, "</svg>\n");
   printf("Wrote output to %s.\n", argv[4]);
   return 0;
