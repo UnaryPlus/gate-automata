@@ -72,7 +72,7 @@ void help(char* progname) {
 oct check_octal(char d, char* progname) {
   if(d < '0' || d > '7') {
     printf("Error: '%c' is not an octal digit.\n", d);
-    help(progname);
+    exit(1);
   }
   return d - '0';
 }
@@ -81,9 +81,10 @@ int main(int argc, char** argv) {
   if(argc != 5) {
     help(argv[0]);
   }
-  if(strlen(argv[1]) != 7) {
-    printf("Error: invalid rulestring length.\n");
-    help(argv[0]);
+  int rule_len = strlen(argv[1]);
+  if(rule_len != 7) {
+    printf("Error: invalid rulestring length (is %d, should be 7).\n", rule_len);
+    exit(1);
   }
   // create rule table
   oct rule_table[8] = { 0 };
@@ -99,12 +100,17 @@ int main(int argc, char** argv) {
   }
   int gens = atoi(argv[3]);
   if(gens <= 0) {
-    printf("Error: generation count must be a positive integer.\n");
-    help(argv[0]);
+    printf("Error: generation count must be a positive integer (is '%s').\n", argv[3]);
+    exit(1);
   }
   FILE* svg = fopen(argv[4], "w");
-  fprintf(svg, "<svg viewBox=\"0 0 %d %d\" xmlns=\"http://www.w3.org/2000/svg\">\n", init_w + (gens * 2) + 3, gens + 3);
+  if(svg == NULL) {
+    printf("Error: could not open file '%s'.\n", argv[4]);
+    exit(1);
+  }
+  fprintf(svg, "<svg viewBox=\"0 0 %d %d\" xmlns=\"http://www.w3.org/2000/svg\">\n", init_w + (gens * 2) + 3, gens + 2);
   run_and_draw(svg, rule_table, gens, 1 + gens, 1, init_gen, init_w);
   fprintf(svg, "</svg>\n");
+  printf("Wrote output to %s.\n", argv[4]);
   return 0;
 }
