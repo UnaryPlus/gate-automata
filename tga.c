@@ -24,19 +24,19 @@ oct* step(oct* rule_table, oct* old_gen, int w) {
   return new_gen;
 }
 
-void draw_line(FILE* svg, int x1, int y1, int x2, int y2) {
-  fprintf(svg, "<line x1=\"%d\" y1=\"%d\" x2=\"%d\" y2=\"%d\" stroke=\"black\" stroke-width=\"0.1\" />\n", x1, y1, x2, y2);
+void draw_line(FILE* svg, int x, int y, int dx, int dy) {
+  fprintf(svg, "M%d %d l%d %d ", x, y, dx, dy);
 }
 
 void draw_oct(FILE* svg, int x, int y, oct b) {
   if(b >> 2) {
-    draw_line(svg, x, y, x - 1, y + 1);
+    draw_line(svg, x, y, -1, 1);
   }
   if(b >> 1 & 1) {
-    draw_line(svg, x, y, x, y + 1);
+    draw_line(svg, x, y, 0, 1);
   }
   if(b & 1) {
-    draw_line(svg, x, y, x + 1, y + 1);
+    draw_line(svg, x, y, 1, 1);
   }
 }
 
@@ -91,7 +91,6 @@ int main(int argc, char** argv) {
   for(int i = 0; i < 7; ++i) {
     rule_table[i + 1] = check_octal(argv[1][i], argv[0]);
   }
-
   // create initial pattern
   int init_w = strlen(argv[2]);
   oct* init_gen = malloc(init_w);
@@ -108,8 +107,12 @@ int main(int argc, char** argv) {
     printf("Error: could not open file '%s'.\n", argv[4]);
     exit(1);
   }
+  fprintf(svg, "<!-- %s %s %s %s %s -->\n", argv[0], argv[1], argv[2], argv[3], argv[4]);
   fprintf(svg, "<svg viewBox=\"0 0 %d %d\" xmlns=\"http://www.w3.org/2000/svg\">\n", init_w + (gens * 2) + 3, gens + 2);
+  fprintf(svg, "<path d=\"");
   run_and_draw(svg, rule_table, gens, gens + 2, 1, init_gen, init_w);
+  fseek(svg, -1, SEEK_CUR); // no space before closing quote
+  fprintf(svg, "\" stroke=\"black\" stroke-width=\"0.1\" stroke-linecap=\"round\" />\n");
   fprintf(svg, "</svg>\n");
   printf("Wrote output to %s.\n", argv[4]);
   return 0;
