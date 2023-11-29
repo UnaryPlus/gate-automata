@@ -108,9 +108,9 @@ int main(int argc, char** argv) {
     exit(1);
   }
   fprintf(svg, "<!-- %s %s %s %s %s -->\n", argv[0], argv[1], argv[2], argv[3], argv[4]);
-  fprintf(svg, "<svg viewBox=\"0 0 %d %d\" xmlns=\"http://www.w3.org/2000/svg\">\n", init_w + (gens * 2) + 3, gens + 2);
+  fprintf(svg, "<svg viewBox=\"0 0 %d %d\" xmlns=\"http://www.w3.org/2000/svg\">\n", init_w + (gens * 2) + 1, gens + 1);
   fprintf(svg, "<path d=\"");
-  run_and_draw(svg, rule_table, gens, gens + 2, 1, init_gen, init_w);
+  run_and_draw(svg, rule_table, gens, gens + 1, 0, init_gen, init_w);
   fseek(svg, -1, SEEK_CUR); // no space before closing quote
   fprintf(svg, "\" stroke=\"black\" stroke-width=\"0.1\" stroke-linecap=\"round\" />\n");
   fprintf(svg, "</svg>\n");
